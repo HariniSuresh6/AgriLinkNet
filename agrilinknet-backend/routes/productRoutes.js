@@ -2,17 +2,39 @@ const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
 const authMiddleware = require("../middleware/authMiddleware");
+const neighboringCities = require("../data/neighbouringCities.json"); // your graph JSON
 
-// ✅ Add Product (Seller)
+// Utility: BFS to calculate distances
+function getDistrictDistances(state, startDistrict) {
+  const graph = neighboringCities[state] || {};
+  const queue = [[startDistrict, 0]];
+  const visited = new Set([startDistrict]);
+  const dist = {};
+
+  while (queue.length > 0) {
+    const [curr, d] = queue.shift();
+    dist[curr] = d;
+
+    for (const neighbor of graph[curr] || []) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        queue.push([neighbor, d + 1]);
+      }
+    }
+  }
+
+  return dist;
+}
+
+// ✅ Add Product
 router.post("/add", authMiddleware, async (req, res) => {
   try {
     const { name, category, pricePerUnit, quantity, expiryTime } = req.body;
-
     if (!name || !category || !pricePerUnit || !quantity || !expiryTime) {
       return res.status(400).json({ msg: "Please fill all fields" });
     }
 
-    const seller = req.user; // From auth middleware
+    const seller = req.user;
 
     const newProduct = new Product({
       name,
@@ -26,8 +48,8 @@ router.post("/add", authMiddleware, async (req, res) => {
         mobile: seller.mobile,
         city: seller.city,
         district: seller.district,
-        state: seller.state
-      }
+        state: seller.state,
+      },
     });
 
     await newProduct.save();
@@ -38,29 +60,42 @@ router.post("/add", authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Get Products (Filtered by proximity & not expired)
+// ✅ Get Products (priority: same district → neighbors → others)
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const user = req.user;
     const now = new Date();
 
+    // fetch products (exclude own products + not expired)
     const products = await Product.find({
       expiryTime: { $gt: now },
-      "seller.id": { $ne: user.id } // Exclude own products
+      "seller.id": { $ne: user.id },
     }).lean();
 
-    const sortedProducts = products.sort((a, b) => {
-      if (a.seller.city === user.city && b.seller.city !== user.city) return -1;
-      if (a.seller.city !== user.city && b.seller.city === user.city) return 1;
+    // Build district distance map using BFS
+    const distMap = getDistrictDistances(user.state, user.district);
 
-      if (a.seller.district === user.district && b.seller.district !== user.district) return -1;
-      if (a.seller.district !== user.district && b.seller.district === user.district) return 1;
+    // Group explicitly
+    const sameDistrict = [];
+    const neighboring = [];
+    const others = [];
 
-      if (a.seller.state === user.state && b.seller.state !== user.state) return -1;
-      if (a.seller.state !== user.state && b.seller.state === user.state) return 1;
-
-      return new Date(a.expiryTime) - new Date(b.expiryTime); // earlier expiry first
+    products.forEach((p) => {
+      const distance = distMap[p.seller.district];
+      if (distance === 0) sameDistrict.push(p);
+      else if (distance === 1) neighboring.push(p);
+      else others.push(p);
     });
+
+    // Sort each group by expiryTime
+    const sortByExpiry = (arr) =>
+      arr.sort((a, b) => new Date(a.expiryTime) - new Date(b.expiryTime));
+
+    const sortedProducts = [
+      ...sortByExpiry(sameDistrict),
+      ...sortByExpiry(neighboring),
+      ...sortByExpiry(others),
+    ];
 
     res.json(sortedProducts);
   } catch (err) {
@@ -69,7 +104,7 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Get products of logged-in user (Seller Profile)
+// ✅ My Products (Seller Profile)
 router.get("/my-products", authMiddleware, async (req, res) => {
   try {
     const user = req.user;
@@ -81,7 +116,7 @@ router.get("/my-products", authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Buy a product
+// ✅ Buy a Product
 router.post("/buy/:id", authMiddleware, async (req, res) => {
   try {
     const user = req.user;
@@ -98,15 +133,13 @@ router.post("/buy/:id", authMiddleware, async (req, res) => {
       return res.status(400).json({ msg: "Not enough stock available" });
     }
 
-    // Reduce stock
     product.quantity -= quantity;
 
-    // Add buyer record
     product.buyers.push({
       id: user.id,
       name: user.username,
       quantityBought: quantity,
-      boughtAt: new Date()
+      boughtAt: new Date(),
     });
 
     await product.save();
@@ -118,21 +151,21 @@ router.post("/buy/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Get products bought by logged-in user
+// ✅ Bought Products
 router.get("/bought", authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
 
     const products = await Product.find({ "buyers.id": userId }).lean();
 
-    const boughtProducts = products.map(p => {
-      const bought = p.buyers.find(b => b.id.toString() === userId);
+    const boughtProducts = products.map((p) => {
+      const bought = p.buyers.find((b) => b.id.toString() === userId);
       return {
         productName: p.name,
         quantityBought: bought.quantityBought,
         boughtAt: bought.boughtAt,
         sellerName: p.seller.name,
-        sellerMobile: p.seller.mobile
+        sellerMobile: p.seller.mobile,
       };
     });
 

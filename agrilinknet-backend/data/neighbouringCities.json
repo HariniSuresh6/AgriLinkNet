@@ -1,0 +1,56 @@
+{
+  "Tamil Nadu": {
+    "Ariyalur": ["Perambalur", "Cuddalore", "Trichy (Tiruchirappalli)"],
+    "Chennai": ["Thiruvallur", "Kanchipuram"],
+    "Coimbatore": ["Tiruppur", "Erode", "The Nilgiris"],
+    "Cuddalore": ["Villupuram", "Ariyalur", "Perambalur"],
+    "Dharmapuri": ["Krishnagiri", "Salem", "Namakkal"],
+    "Dindigul": ["Madurai", "Theni", "Karur", "Trichy (Tiruchirappalli)"],
+    "Erode": ["Tiruppur", "Salem", "Coimbatore"],
+    "Kanchipuram": ["Chennai", "Thiruvallur", "Villupuram"],
+    "Kanniyakumari": ["Thirunelveli", "Tuticorin (Thoothukkudi)"],
+    "Karur": ["Trichy (Tiruchirappalli)", "Dindigul", "Erode"],
+    "Krishnagiri": ["Dharmapuri", "Vellore", "Salem"],
+    "Madurai": ["Dindigul", "Theni", "Sivaganga", "Virudhunagar"],
+    "Nagapattinam": ["Thiruvarur", "Tanjore (Thanjavur)"],
+    "Namakkal": ["Salem", "Erode", "Tiruchirappalli", "Karur"],
+    "Perambalur": ["Trichy (Tiruchirappalli)", "Ariyalur", "Cuddalore"],
+    "Pudukkottai": ["Trichy (Tiruchirappalli)", "Thanjavur", "Sivaganga"],
+    "Ramanathapuram": ["Sivaganga", "Thoothukkudi", "Virudhunagar"],
+    "Salem": ["Dharmapuri", "Erode", "Namakkal", "Krishnagiri"],
+    "Sivaganga": ["Madurai", "Ramanathapuram", "Pudukkottai"],
+    "Thanjavur": ["Nagapattinam", "Pudukkottai", "Tiruvarur"],
+    "The Nilgiris": ["Coimbatore", "Erode", "Tiruppur"],
+    "Theni": ["Dindigul", "Madurai", "Kombai"],
+    "Thiruvallur": ["Chennai", "Kanchipuram"],
+    "Thiruvarur": ["Nagapattinam", "Thanjavur"],
+    "Thoothukkudi": ["Kanniyakumari", "Ramanathapuram", "Virudhunagar"],
+    "Tiruchirappalli": ["Perambalur", "Karur", "Dindigul", "Namakkal"],
+    "Tirunelveli": ["Kanniyakumari", "Thoothukkudi", "Tiruvannamalai"],
+    "Tiruppur": ["Coimbatore", "Erode", "The Nilgiris"],
+    "Tiruvannamalai": ["Vellore", "Tiruvallur", "Chennai"],
+    "Vellore": ["Tiruvannamalai", "Krishnagiri", "Chennai"],
+    "Viluppuram": ["Cuddalore", "Kanchipuram", "Thiruvannamalai"],
+    "Virudhunagar": ["Madurai", "Sivaganga", "Thoothukkudi"]
+  },
+  "Karnataka": {
+    "Bangalore Urban": ["Mysuru", "Chikkaballapur"],
+    "Mysuru": ["Bangalore Urban", "Mangalore", "Chamarajanagar"],
+    "Mangalore": ["Mysuru", "Udupi"]
+  },
+  "Delhi": {
+    "Central Delhi": ["North Delhi", "South Delhi"],
+    "South Delhi": ["Central Delhi", "North Delhi"],
+    "North Delhi": ["Central Delhi", "South Delhi"]
+  },
+  "West Bengal": {
+    "Kolkata": ["Howrah", "North 24 Parganas"],
+    "Darjeeling": ["Siliguri", "Kalimpong"],
+    "Howrah": ["Kolkata", "North 24 Parganas"]
+  },
+  "Uttar Pradesh": {
+    "Lucknow": ["Kanpur", "Unnao"],
+    "Kanpur": ["Lucknow", "Etawah"],
+    "Agra": ["Firozabad", "Mathura"]
+  }
+}

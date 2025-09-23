@@ -6,7 +6,7 @@ require("dotenv").config();
 // Routes
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
-const orderRoutes = require("./routes/orderRoutes");
+const mappedProductsRoute = require("./routes/mappedProducts");
 
 const app = express();
 
@@ -17,7 +17,7 @@ app.use(cors());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
-app.use("/api/orders", orderRoutes);
+app.use("/api/mapped-products", mappedProductsRoute);
 
 // DB Connection
 mongoose.connect(process.env.MONGO_URI)
