@@ -7,6 +7,10 @@ require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 const mappedProductsRoute = require("./routes/mappedProducts");
+const leaderboardRoute = require("./routes/leaderboard");
+
+
+
 
 const app = express();
 
@@ -18,6 +22,8 @@ app.use(cors());
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/mapped-products", mappedProductsRoute);
+app.use("/api/leaderboard", leaderboardRoute);
+
 
 // DB Connection
 mongoose.connect(process.env.MONGO_URI)
